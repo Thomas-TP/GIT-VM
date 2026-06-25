@@ -179,24 +179,35 @@ function VmConfig({ vm, onChange, catalog, snapshots }: { vm: VmCfg; onChange: (
         </div>
       </Section>
 
-      <Section n={4} title={t('newvm.course')} hint={t('newvm.courseHint')}>
+      <Section n={4} title={t('newvm.course')} hint={t('newvm.courseHintMulti')}>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Choice selected={vm.course === ''} onClick={() => onChange({ course: '' })}>
-            <div className="font-medium">{t('newvm.courseNone')}</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">{t('newvm.courseNoneHint')}</div>
-          </Choice>
-          {catalog.courses.map((c) => (
-            <Choice key={c.id} selected={vm.course === c.id} onClick={() => onChange({ course: c.id })}>
-              <div className="font-medium">{c.label}</div>
-              <div className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{c.description}</div>
-              <div className="mt-2 flex flex-wrap gap-1">
-                {c.tools.slice(0, 6).map((tool) => (
-                  <span key={tool} className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">{tool}</span>
+          {(() => {
+            const selected = vm.course ? vm.course.split(',').filter(Boolean) : [];
+            const toggle = (id: string) => {
+              const next = selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id];
+              onChange({ course: next.join(',') });
+            };
+            return (
+              <>
+                <Choice selected={selected.length === 0} onClick={() => onChange({ course: '' })}>
+                  <div className="font-medium">{t('newvm.courseNone')}</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">{t('newvm.courseNoneHint')}</div>
+                </Choice>
+                {catalog.courses.map((c) => (
+                  <Choice key={c.id} selected={selected.includes(c.id)} onClick={() => toggle(c.id)}>
+                    <div className="font-medium">{c.label}</div>
+                    <div className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{c.description}</div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {c.tools.slice(0, 6).map((tool) => (
+                        <span key={tool} className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">{tool}</span>
+                      ))}
+                      {c.tools.length > 6 && <span className="text-[10px] text-muted-foreground">+{c.tools.length - 6}</span>}
+                    </div>
+                  </Choice>
                 ))}
-                {c.tools.length > 6 && <span className="text-[10px] text-muted-foreground">+{c.tools.length - 6}</span>}
-              </div>
-            </Choice>
-          ))}
+              </>
+            );
+          })()}
         </div>
       </Section>
 
