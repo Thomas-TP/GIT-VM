@@ -63,8 +63,8 @@ export const PERF: Record<string, PerfPreset> = {
   compute2xl: { id: 'compute2xl', label: 'Compute 2XL', instanceType: 'c7i.2xlarge', vcpu: 8, ramGb: 16, hourlyUsd: 0.4084, description: 'Compute optimisé 8 vCPU / 16 Go.' },
   balancedL: { id: 'balancedL', label: 'Équilibré L', instanceType: 'm7i.large', vcpu: 2, ramGb: 8, hourlyUsd: 0.1232, description: 'Usage général dernière génération, 8 Go.' },
   balancedXl: { id: 'balancedXl', label: 'Équilibré XL', instanceType: 'm7i.xlarge', vcpu: 4, ramGb: 16, hourlyUsd: 0.2464, description: 'Usage général 4 vCPU / 16 Go.' },
-  memoryL: { id: 'memoryL', label: 'Mémoire L', instanceType: 'r7i.large', vcpu: 2, ramGb: 16, hourlyUsd: 0.1596, description: 'Optimisé mémoire 16 Go (bases de données, cache).' },
-  memoryXl: { id: 'memoryXl', label: 'Mémoire XL', instanceType: 'r7i.xlarge', vcpu: 4, ramGb: 32, hourlyUsd: 0.3192, description: 'Optimisé mémoire 4 vCPU / 32 Go.' },
+  memoryL: { id: 'memoryL', label: 'Mémoire L', instanceType: 'r6i.large', vcpu: 2, ramGb: 16, hourlyUsd: 0.1512, description: 'Optimisé mémoire 16 Go (bases de données, cache).' },
+  memoryXl: { id: 'memoryXl', label: 'Mémoire XL', instanceType: 'r6i.xlarge', vcpu: 4, ramGb: 32, hourlyUsd: 0.3024, description: 'Optimisé mémoire 4 vCPU / 32 Go.' },
   // Legacy (masqués) — remappés pour les demandes existantes.
   eco: { id: 'eco', label: 'Eco', instanceType: 't3.small', vcpu: 2, ramGb: 2, hourlyUsd: 0.0272, hidden: true },
   std: { id: 'std', label: 'Standard', instanceType: 't3.small', vcpu: 2, ramGb: 2, hourlyUsd: 0.0272, hidden: true },
