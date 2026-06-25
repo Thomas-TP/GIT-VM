@@ -1,9 +1,13 @@
 import i18n from '../i18n';
 
-// SQLite datetime('now') returns UTC "YYYY-MM-DD HH:MM:SS"
+// Formats a date in the user's local timezone.
+// Handles two stored shapes: SQLite datetime('now') = naive UTC "YYYY-MM-DD HH:MM:SS"
+// (no tz → treat as UTC) and full ISO with a tz designator ("…Z" / "+02:00" → keep as-is).
 export function fmtDate(iso?: string | null): string {
   if (!iso) return '—';
-  const d = new Date(iso.replace(' ', 'T') + 'Z');
+  const norm = iso.replace(' ', 'T');
+  const hasTz = /Z$|[+-]\d{2}:?\d{2}$/.test(norm);
+  const d = new Date(hasTz ? norm : norm + 'Z');
   if (isNaN(d.getTime())) return iso;
   return d.toLocaleString(i18n.language, { dateStyle: 'medium', timeStyle: 'short' });
 }

@@ -237,14 +237,16 @@ export const COURSES: Record<string, CoursePreset> = {
   },
 };
 
-export const isValidCourse = (id: string) => id === '' || Object.prototype.hasOwnProperty.call(COURSES, id);
+// Accepts a single course id, a comma-separated list of ids, or '' (none).
+const courseIds = (id: string | null | undefined) => (id ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+export const isValidCourse = (id: string) => courseIds(id).every((c) => Object.prototype.hasOwnProperty.call(COURSES, c));
 
-// cloud-init user-data installing a course's tools (Linux only). undefined if no course.
+// cloud-init user-data installing the selected course bundles' tools (Linux only).
+// undefined if no (valid) course. Supports multiple courses (comma-separated ids).
 export function buildCourseUserData(courseId: string | null | undefined): string | undefined {
-  if (!courseId) return undefined;
-  const c = COURSES[courseId];
-  if (!c) return undefined;
-  return `${COURSE_SCRIPT_HEADER}\n${c.install}\n`;
+  const installs = courseIds(courseId).map((c) => COURSES[c]?.install).filter(Boolean);
+  if (!installs.length) return undefined;
+  return `${COURSE_SCRIPT_HEADER}\n${installs.join('\n')}\n`;
 }
 
 // Windows (Chocolatey) package mapping per course — best effort equivalents.
@@ -261,9 +263,10 @@ const COURSE_WIN: Record<string, string> = {
   python: 'python',
 };
 
-// PowerShell that installs Chocolatey then the course's tools (Windows). undefined if none.
+// PowerShell that installs Chocolatey then the selected course bundles' tools (Windows).
+// undefined if none. Supports multiple courses (comma-separated ids); packages deduped.
 export function buildWindowsCourseInstall(courseId: string | null | undefined): string | undefined {
-  const pkgs = courseId ? COURSE_WIN[courseId] : undefined;
+  const pkgs = [...new Set(courseIds(courseId).flatMap((c) => (COURSE_WIN[c] ?? '').split(' ')).filter(Boolean))].join(' ');
   if (!pkgs) return undefined;
   return [
     "Set-ExecutionPolicy Bypass -Scope Process -Force",
